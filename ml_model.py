@@ -35,3 +35,8 @@ print(class_counts)
 class_percentages = class_counts / len(transactions_eda) * 100
 print(class_percentages)
 
+grouped_amount = transactions_eda.groupby("isFraud")["amount"]
+amount_statistics = grouped_amount.describe()
+
+print(amount_statistics)
+
