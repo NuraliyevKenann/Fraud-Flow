@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local datasets and generated models
+data/
+models/
+
+# Notebook and editor artifacts
+.ipynb_checkpoints/
+.vscode/
