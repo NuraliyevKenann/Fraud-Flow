@@ -40,3 +40,8 @@ amount_statistics = grouped_amount.describe()
 
 print(amount_statistics)
 
+grouped=transactions_eda.groupby('type')
+
+grouped['isFraud'].agg["count", "sum", "mean"]
+fraud_by_type=grouped
+print(fraud_by_type)
