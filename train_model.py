@@ -68,3 +68,7 @@ print("Model training completed")
 
 Validation_probabilities=model_pipeline.predict_proba(X_validation)
 print(Validation_probabilities.shape)
+fraud_probabilities = Validation_probabilities[:, 1]
+
+print(fraud_probabilities.shape)
+print(fraud_probabilities[:5])
