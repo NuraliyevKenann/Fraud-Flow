@@ -57,18 +57,11 @@ ct=ColumnTransformer([
   ('scale', scaler , ['step','amount'])]
 )
 
-X_train_prepared=ct.fit_transform(X_train)
-X_validation_prepared=ct.transform(X_validation)
-X_test_prepared=ct.transform(X_test)
-
-print(X_train_prepared.shape)
-print(X_validation_prepared.shape)
-print(X_test_prepared.shape)
-
 clf=LogisticRegression(
     class_weight='balanced',
     max_iter=1000
 )
 
 model_pipeline=Pipeline([('preprocessor', ct),('classifier',clf)])
-
+model_pipeline.fit(X_train,y_train)
+print("Model training completed")
