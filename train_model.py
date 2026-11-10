@@ -4,6 +4,12 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler 
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
+from sklearn.metrics import confusion_matrix 
+from sklearn.metrics import precision_score
+from sklearn.metrics import recall_score 
+from sklearn.metrics import f1_score 
+from sklearn.metrics import precision_recall_curve
+from sklearn.metrics import average_precision_score
 
 DATA_PATH='data/PS_20174392719_1491204439457_log.csv'
 MODEL_COLUMNS=['step','type','amount','isFraud']
@@ -76,3 +82,16 @@ print(fraud_probabilities[:5])
 threshold = 0.5
 validation_predictions = (fraud_probabilities >= threshold).astype(int)
 print(pd.Series(validation_predictions).value_counts())
+
+confusion_result=confusion_matrix(y_validation,validation_predictions)
+precision_result=precision_score(y_validation,validation_predictions)
+recall_result=recall_score(y_validation,validation_predictions)
+f1_result=f1_score(y_validation,validation_predictions)
+
+print(confusion_result)
+print(precision_result)
+print(recall_result)
+print(f1_result)
+
+precision,recall,thresholds=precision_recall_curve(y_validation,fraud_probabilities)
+avp=average_precision_score(y_validation,fraud_probabilities)
