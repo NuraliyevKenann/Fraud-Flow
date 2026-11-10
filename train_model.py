@@ -3,6 +3,7 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler 
 from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import Pipeline
 
 DATA_PATH='data/PS_20174392719_1491204439457_log.csv'
 MODEL_COLUMNS=['step','type','amount','isFraud']
@@ -69,4 +70,5 @@ clf=LogisticRegression(
     max_iter=1000
 )
 
+model_pipeline=Pipeline([('preprocessor', ct),('classifier',clf)])
 
