@@ -95,3 +95,8 @@ print(f1_result)
 
 precision,recall,thresholds=precision_recall_curve(y_validation,fraud_probabilities)
 avp=average_precision_score(y_validation,fraud_probabilities)
+
+print(precision.shape)
+print(recall.shape)
+print(thresholds.shape)
+print(avp.shape)
