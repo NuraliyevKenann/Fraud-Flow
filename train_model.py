@@ -65,3 +65,6 @@ clf=LogisticRegression(
 model_pipeline=Pipeline([('preprocessor', ct),('classifier',clf)])
 model_pipeline.fit(X_train,y_train)
 print("Model training completed")
+
+Validation_probabilities=model_pipeline.predict_proba(X_validation)
+print(Validation_probabilities.shape)
