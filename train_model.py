@@ -10,6 +10,7 @@ from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score 
 from sklearn.metrics import precision_recall_curve
 from sklearn.metrics import average_precision_score
+import numpy as np
 
 DATA_PATH='data/PS_20174392719_1491204439457_log.csv'
 MODEL_COLUMNS=['step','type','amount','isFraud']
@@ -99,4 +100,25 @@ avp=average_precision_score(y_validation,fraud_probabilities)
 print(precision.shape)
 print(recall.shape)
 print(thresholds.shape)
-print(avp.shape)
+print(avp)
+
+precision_for_thresholds = precision[:-1]
+recall_for_thresholds = recall[:-1]
+print(precision_for_thresholds.shape)
+print(recall_for_thresholds.shape)
+f1_scores = (
+    2 * precision_for_thresholds * recall_for_thresholds
+    / (precision_for_thresholds + recall_for_thresholds + 1e-10)
+)
+print(f1_scores.shape)
+
+best_index = np.argmax(f1_scores)
+best_threshold = thresholds[best_index]
+best_precision = precision_for_thresholds[best_index]
+best_recall = recall_for_thresholds[best_index]
+best_f1 = f1_scores[best_index]
+
+print("Best threshold:", best_threshold)
+print("Best precision:", best_precision)
+print("Best recall:", best_recall)
+print("Best F1:", best_f1)
