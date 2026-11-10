@@ -1,6 +1,8 @@
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import StandardScaler 
+from sklearn.linear_model import LogisticRegression
 
 DATA_PATH='data/PS_20174392719_1491204439457_log.csv'
 MODEL_COLUMNS=['step','type','amount','isFraud']
@@ -46,11 +48,12 @@ print(y_validation.value_counts())
 print(y_test.value_counts())
 
 enc=OneHotEncoder(handle_unknown='ignore')
+scaler=StandardScaler()
 
 ct=ColumnTransformer([
     ('type.encoder',enc, ['type'])
-],
-  remainder='passthrough'
+,
+  ('scale', scaler , ['step','amount'])]
 )
 
 X_train_prepared=ct.fit_transform(X_train)
@@ -60,3 +63,10 @@ X_test_prepared=ct.transform(X_test)
 print(X_train_prepared.shape)
 print(X_validation_prepared.shape)
 print(X_test_prepared.shape)
+
+clf=LogisticRegression(
+    class_weight='balanced',
+    max_iter=1000
+)
+
+
