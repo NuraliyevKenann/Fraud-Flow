@@ -1,4 +1,6 @@
 import pandas as pd
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.compose import ColumnTransformer
 
 DATA_PATH='data/PS_20174392719_1491204439457_log.csv'
 MODEL_COLUMNS=['step','type','amount','isFraud']
@@ -42,3 +44,19 @@ print(y_test.shape)
 print(y_train.value_counts())
 print(y_validation.value_counts())
 print(y_test.value_counts())
+
+enc=OneHotEncoder(handle_unknown='ignore')
+
+Train=enc.fit_transform(X_train[['type']])
+Validation=enc.transform(X_validation[['type']])
+Test=enc.transform(X_test[['type']])
+
+print(Train.shape)
+print(Validation.shape)
+print(Test.shape)
+
+ct=ColumnTransformer([
+    ('type.encoder',enc, ['type'])
+],
+  reminder='passthrough'
+)
