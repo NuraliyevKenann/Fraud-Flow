@@ -122,3 +122,25 @@ print("Best threshold:", best_threshold)
 print("Best precision:", best_precision)
 print("Best recall:", best_recall)
 print("Best F1:", best_f1)
+
+test_probabilities=model_pipeline.predict_proba(X_test)
+print(test_probabilities.shape)
+
+test_fraud_probabilities = test_probabilities[:, 1]
+test_predictions = (test_fraud_probabilities >= best_threshold).astype(int)
+
+test_confusion = confusion_matrix(y_test, test_predictions)
+test_precision = precision_score(y_test, test_predictions)
+test_recall = recall_score(y_test, test_predictions)
+test_f1 = f1_score(y_test, test_predictions)
+test_average_precision = average_precision_score(
+    y_test,
+    test_fraud_probabilities
+)
+
+print("Test confusion matrix:")
+print(test_confusion)
+print("Test precision:", test_precision)
+print("Test recall:", test_recall)
+print("Test F1:", test_f1)
+print("Test average precision:", test_average_precision)
