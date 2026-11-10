@@ -72,3 +72,7 @@ fraud_probabilities = Validation_probabilities[:, 1]
 
 print(fraud_probabilities.shape)
 print(fraud_probabilities[:5])
+
+threshold = 0.5
+validation_predictions = (fraud_probabilities >= threshold).astype(int)
+print(pd.Series(validation_predictions).value_counts())
