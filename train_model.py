@@ -47,16 +47,16 @@ print(y_test.value_counts())
 
 enc=OneHotEncoder(handle_unknown='ignore')
 
-Train=enc.fit_transform(X_train[['type']])
-Validation=enc.transform(X_validation[['type']])
-Test=enc.transform(X_test[['type']])
-
-print(Train.shape)
-print(Validation.shape)
-print(Test.shape)
-
 ct=ColumnTransformer([
     ('type.encoder',enc, ['type'])
 ],
   remainder='passthrough'
 )
+
+X_train_prepared=ct.fit_transform(X_train)
+X_validation_prepared=ct.transform(X_validation)
+X_test_prepared=ct.transform(X_test)
+
+print(X_train_prepared.shape)
+print(X_validation_prepared.shape)
+print(X_test_prepared.shape)
