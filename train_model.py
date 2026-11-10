@@ -38,3 +38,7 @@ print(X_validation.shape)
 print(y_validation.shape)
 print(X_test.shape)
 print(y_test.shape)
+
+print(y_train.value_counts())
+print(y_validation.value_counts())
+print(y_test.value_counts())
