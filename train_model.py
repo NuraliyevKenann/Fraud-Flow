@@ -58,5 +58,5 @@ print(Test.shape)
 ct=ColumnTransformer([
     ('type.encoder',enc, ['type'])
 ],
-  reminder='passthrough'
+  remainder='passthrough'
 )
