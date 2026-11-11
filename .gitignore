@@ -11,3 +11,19 @@ models/
 # Notebook and editor artifacts
 .ipynb_checkpoints/
 .vscode/
+
+# Frontend (fraudflow-ui)
+node_modules/
+dist/
+*.tsbuildinfo
+*.log
+
+# Environment and secrets
+.env
+.env.*
+
+# Archives
+*.zip
+
+# macOS
+.DS_Store
