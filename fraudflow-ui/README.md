@@ -1,10 +1,10 @@
 # FraudFlow UI
 
-Minimalist white-and-green React dashboard prototype for the Fraud-Flow ML project.
+Minimalist white-and-green React dashboard for the Fraud-Flow ML project, connected to the FastAPI backend in `../backend`.
 
 ## Run
 
-Requires Node.js 20+.
+Requires Node.js 20+. Start the API first (see the root README), then:
 
 ```bash
 npm install
@@ -16,19 +16,12 @@ Open the local URL printed by Vite (normally http://localhost:5173).
 ## Features
 
 - Left navigation: Overview, Transactions, Analytics.
-- Searchable and filterable transactions table with five demo records.
-- CSV export of filtered transactions.
-- Overview metrics based on sample data.
-- Analytics: transactions by type, placeholders for model metrics (precision, recall, F1, average precision) and the future prediction form.
+- Overview: test-period totals, model-flagged count and rate, highest-risk transactions.
+- Transactions: server-side search, type/status filters, risk sorting, pagination, CSV export. Each row shows the model's fraud probability, its decision, and the actual label.
+- Analytics: test and validation metrics (precision, recall, F1, average precision), confusion matrix, actual vs. flagged fraud by type, and a form that scores a single transaction via `POST /api/predict`.
+- Shows an "API offline" state with the start command when the backend is not running.
 - Responsive layout.
 
-## Important
+## Data
 
-This is a **frontend-only prototype**. No backend or trained model is connected. `Review` and `Completed` statuses are illustrative, not ML predictions. No real payment functions are implemented.
-
-## Integration roadmap
-
-1. Export the fitted scikit-learn pipeline and validation-selected threshold from `train_model.py`.
-2. Build a FastAPI service to load the artifacts and expose prediction endpoints.
-3. Replace the demo data and placeholder analytics with API responses.
-4. Validate predictions against known test cases before deployment.
+All transactions are synthetic PaySim records from the test period (steps 632–743), scored by the logistic regression model trained in `train_model.py`. Nothing here processes real payments.
