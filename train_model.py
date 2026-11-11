@@ -144,3 +144,40 @@ print("Test precision:", test_precision)
 print("Test recall:", test_recall)
 print("Test F1:", test_f1)
 print("Test average precision:", test_average_precision)
+
+# --- Save model artifacts for the backend API ---
+import json
+from pathlib import Path
+import joblib
+
+MODELS_DIR = Path('models')
+MODELS_DIR.mkdir(exist_ok=True)
+
+model_metrics = {
+    'threshold': float(best_threshold),
+    'validation': {
+        'precision': float(best_precision),
+        'recall': float(best_recall),
+        'f1': float(best_f1),
+        'average_precision': float(avp),
+    },
+    'test': {
+        'precision': float(test_precision),
+        'recall': float(test_recall),
+        'f1': float(test_f1),
+        'average_precision': float(test_average_precision),
+        'confusion_matrix': test_confusion.tolist(),
+    },
+}
+
+model_artifact = {
+    'pipeline': model_pipeline,
+    'threshold': float(best_threshold),
+    'features': ['step', 'type', 'amount'],
+    'test_steps': [632, 743],
+    'metrics': model_metrics,
+}
+
+joblib.dump(model_artifact, MODELS_DIR / 'fraudflow_model.joblib')
+(MODELS_DIR / 'metrics.json').write_text(json.dumps(model_metrics, indent=2))
+print("Model saved to", MODELS_DIR / 'fraudflow_model.joblib')
