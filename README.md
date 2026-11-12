@@ -1,111 +1,111 @@
 # FraudFlow
 
-> Система обнаружения подозрительных финансовых транзакций на основе машинного обучения.
+> A machine learning system for detecting suspicious financial transactions.
 
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-ML-F7931E?logo=scikitlearn&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-API-009688?logo=fastapi&logoColor=white)
 ![React](https://img.shields.io/badge/React-UI-61DAFB?logo=react&logoColor=20232A)
 
-FraudFlow анализирует параметры транзакции, рассчитывает оценку риска и сравнивает её с порогом, выбранным на валидационной выборке. Проект объединяет полный ML-процесс: исследование данных, обучение модели, сохранение артефакта, API и пользовательский интерфейс.
+FraudFlow analyzes transaction attributes, calculates a fraud risk score, and compares it with a threshold selected on the validation set. The project covers the complete ML workflow: data exploration, model training, artifact persistence, API serving, and a user interface.
 
-## Возможности
+## Features
 
-- обучение модели на синтетическом финансовом датасете PaySim;
-- временное разделение данных на обучение, валидацию и тест;
-- обработка числовых и категориальных признаков через `Pipeline`;
-- подбор порога обнаружения по максимальному F1 на валидации;
-- сохранение модели, порога, версии и списка признаков в `.joblib`;
-- проверка одной транзакции через FastAPI;
-- просмотр всех 6 362 620 операций PaySim с пагинацией;
-- зелёно-белый React-интерфейс с формой Risk Check и аналитикой.
+- Model training on the synthetic PaySim financial dataset
+- Time-based train, validation, and test splits
+- Numerical and categorical preprocessing with a scikit-learn `Pipeline`
+- Detection-threshold selection by maximum validation F1 score
+- Model, threshold, version, and feature-list persistence in a `.joblib` artifact
+- Single-transaction prediction through FastAPI
+- Paginated access to all 6,362,620 PaySim transactions
+- Responsive green-and-white React interface with Risk Check and analytics views
 
-## Как устроена система
+## System Architecture
 
 ```mermaid
 flowchart LR
-    A[PaySim CSV] --> B[Анализ данных]
-    B --> C[Обучение Pipeline]
+    A[PaySim CSV] --> B[Data Analysis]
+    B --> C[Pipeline Training]
     C --> D[fraudflow_model.joblib]
     D --> E[FastAPI]
-    E --> F[React-интерфейс]
+    E --> F[React Interface]
     F --> E
 ```
 
-1. `train_model.py` загружает PaySim и обучает модель.
-2. Обученный Pipeline и его настройки сохраняются в `artifacts/fraudflow_model.joblib`.
-3. `api.py` загружает артефакт один раз при запуске сервера.
-4. React-интерфейс отправляет транзакции в API и показывает результат модели.
+1. `train_model.py` loads PaySim and trains the model.
+2. The fitted pipeline and its settings are saved to `artifacts/fraudflow_model.joblib`.
+3. `api.py` loads the artifact once when the server starts.
+4. The React interface sends transactions to the API and displays model results.
 
-## Данные и признаки
+## Dataset and Features
 
-Проект использует [PaySim](https://www.kaggle.com/datasets/ealaxi/paysim1) — синтетический датасет мобильных финансовых операций.
+FraudFlow uses [PaySim](https://www.kaggle.com/datasets/ealaxi/paysim1), a synthetic dataset of mobile financial transactions.
 
-Входные признаки модели:
+Model input features:
 
-| Признак | Назначение |
+| Feature | Description |
 |---|---|
-| `step` | Временной шаг операции |
-| `type` | Тип транзакции |
-| `amount` | Сумма операции |
-| `oldbalanceOrg` | Баланс отправителя до операции |
-| `newbalanceOrig` | Баланс отправителя после операции |
-| `oldbalanceDest` | Баланс получателя до операции |
-| `newbalanceDest` | Баланс получателя после операции |
+| `step` | Transaction time step |
+| `type` | Transaction type |
+| `amount` | Transaction amount |
+| `oldbalanceOrg` | Sender balance before the transaction |
+| `newbalanceOrig` | Sender balance after the transaction |
+| `oldbalanceDest` | Recipient balance before the transaction |
+| `newbalanceDest` | Recipient balance after the transaction |
 
-Целевая переменная — `isFraud`. Поле `isFlaggedFraud` не используется как входной признак, поскольку оно представляет результат существующего правила обнаружения.
+The target variable is `isFraud`. The `isFlaggedFraud` field is not used as an input because it represents the result of an existing detection rule.
 
-Данные разделяются по времени:
+The data is split chronologically:
 
-| Выборка | Значения `step` |
+| Split | `step` range |
 |---|---:|
-| Обучение | 1–520 |
-| Валидация | 521–631 |
-| Тест | 632–743 |
+| Training | 1–520 |
+| Validation | 521–631 |
+| Test | 632–743 |
 
-## Модель
+## Model
 
-В основе FraudFlow находится логистическая регрессия:
+FraudFlow uses logistic regression:
 
-- `OneHotEncoder` обрабатывает тип операции;
-- `StandardScaler` масштабирует числовые признаки;
-- `LogisticRegression` использует `class_weight="balanced"`;
-- решатель `newton-cholesky` подходит для большого количества строк и небольшого числа признаков;
-- все преобразования объединены в единый scikit-learn `Pipeline`.
+- `OneHotEncoder` processes the transaction type.
+- `StandardScaler` scales the numerical features.
+- `LogisticRegression` uses `class_weight="balanced"`.
+- The `newton-cholesky` solver is suitable for many rows and a small feature set.
+- All preprocessing and classification steps are combined in one scikit-learn `Pipeline`.
 
-Выбранный порог: `0.9931289828`.
+Selected decision threshold: `0.9931289828`.
 
-### Результаты на тестовой выборке
+### Test Results
 
-| Метрика | Результат |
+| Metric | Result |
 |---|---:|
 | Precision | **88.01%** |
 | Recall | **56.31%** |
-| F1 | **68.68%** |
+| F1 score | **68.68%** |
 | Average Precision | **76.35%** |
 
-Матрица ошибок:
+Confusion matrix:
 
 ```text
 [[88118    96]
  [  547   705]]
 ```
 
-- 705 мошеннических операций обнаружено;
-- 547 мошеннических операций пропущено;
-- 96 обычных операций отмечено ошибочно;
-- 88 118 обычных операций классифицировано правильно.
+- 705 fraudulent transactions were detected.
+- 547 fraudulent transactions were missed.
+- 96 normal transactions were incorrectly flagged.
+- 88,118 normal transactions were classified correctly.
 
-## Структура проекта
+## Project Structure
 
 ```text
 FraudFlow/
-├── api.py                 # FastAPI и доступ к модели
-├── train_model.py         # обучение, оценка и сохранение модели
-├── data_analysis.py       # исследовательский анализ PaySim
-├── artifacts/             # локальные артефакты модели
-├── data/                  # локальный CSV PaySim
-└── fraudflow-ui/          # React + TypeScript интерфейс
+├── api.py                 # FastAPI application and model access
+├── train_model.py         # Model training, evaluation, and persistence
+├── data_analysis.py       # Exploratory analysis of PaySim
+├── artifacts/             # Local model artifacts
+├── data/                  # Local PaySim CSV file
+└── fraudflow-ui/          # React and TypeScript interface
     ├── src/
     │   ├── App.tsx
     │   ├── RiskCheck.tsx
@@ -113,9 +113,9 @@ FraudFlow/
     └── package.json
 ```
 
-## Установка
+## Installation
 
-### 1. Python-окружение
+### 1. Create the Python environment
 
 ```powershell
 py -m venv .venv
@@ -123,40 +123,40 @@ py -m venv .venv
 python -m pip install pandas numpy scikit-learn joblib fastapi pydantic "uvicorn[standard]"
 ```
 
-### 2. Датасет
+### 2. Add the dataset
 
-Скачайте PaySim и поместите CSV по адресу:
+Download PaySim and place the CSV file at:
 
 ```text
 data/PS_20174392719_1491204439457_log.csv
 ```
 
-Папка `data/` исключена из Git, поскольку датасет имеет большой размер.
+The `data/` directory is excluded from Git because the dataset is large.
 
-### 3. Обучение модели
+### 3. Train the model
 
 ```powershell
 python train_model.py
 ```
 
-После обучения будет создан файл:
+Training creates the following artifact:
 
 ```text
 artifacts/fraudflow_model.joblib
 ```
 
-### 4. Запуск API
+### 4. Start the API
 
 ```powershell
 python -m uvicorn api:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-- Swagger: <http://127.0.0.1:8000/docs>
+- Swagger UI: <http://127.0.0.1:8000/docs>
 - Health check: <http://127.0.0.1:8000/health>
 
-### 5. Запуск интерфейса
+### 5. Start the interface
 
-В новом терминале:
+Open a second terminal:
 
 ```powershell
 cd fraudflow-ui
@@ -164,17 +164,17 @@ npm install
 npm run dev -- --host 127.0.0.1 --port 5173
 ```
 
-Интерфейс: <http://127.0.0.1:5173/>
+Open the interface at <http://127.0.0.1:5173/>.
 
 ## API
 
-| Метод | Путь | Назначение |
+| Method | Endpoint | Purpose |
 |---|---|---|
-| `GET` | `/health` | Проверка API и версии модели |
-| `GET` | `/transactions` | Постраничное чтение PaySim |
-| `POST` | `/predict` | Проверка одной транзакции моделью |
+| `GET` | `/health` | Check API status and model version |
+| `GET` | `/transactions` | Read PaySim transactions page by page |
+| `POST` | `/predict` | Evaluate one transaction with the model |
 
-Пример запроса к `/predict`:
+Example `/predict` request:
 
 ```json
 {
@@ -188,7 +188,7 @@ npm run dev -- --host 127.0.0.1 --port 5173
 }
 ```
 
-Пример ответа:
+Example response:
 
 ```json
 {
@@ -199,31 +199,31 @@ npm run dev -- --host 127.0.0.1 --port 5173
 }
 ```
 
-## Интерфейс
+## Interface
 
-- **Overview** — обзор демонстрационных показателей;
-- **Transactions** — просмотр полного датасета по семь операций на страницу;
-- **Risk Check** — отправка транзакции в ML-модель;
-- **Analytics** — итоговые метрики и аналитические блоки;
-- **Settings** — настройки интерфейса.
+- **Overview** — summary dashboard with demonstration activity data
+- **Transactions** — access to the complete dataset, seven rows per page
+- **Risk Check** — submit a transaction to the ML model
+- **Analytics** — model metrics and analytical components
+- **Settings** — local interface preferences
 
-## Ограничения
+## Limitations
 
-- PaySim содержит синтетические, а не реальные банковские операции.
-- `fraud_score` является оценкой модели, а не гарантированной вероятностью мошенничества.
-- Решение модели не должно использоваться как единственное основание для блокировки платежа.
-- API и интерфейс настроены для локальной разработки.
-- Файлы `.joblib` следует загружать только из доверенного источника.
+- PaySim contains synthetic rather than real banking transactions.
+- `fraud_score` is a model score, not a guaranteed fraud probability.
+- A model prediction should not be the sole reason for blocking a payment.
+- The API and interface are configured for local development.
+- `.joblib` files should only be loaded from trusted sources.
 
-## Следующее развитие
+## Future Improvements
 
-- хранение транзакций в базе данных;
-- фильтрация и поиск по полному датасету;
-- журнал проверок и история решений;
-- авторизация пользователей;
-- контейнеризация через Docker;
-- мониторинг качества модели и повторное обучение.
+- Store transactions in a database.
+- Add full-dataset filtering and search.
+- Keep prediction history and an audit log.
+- Add user authentication.
+- Containerize the application with Docker.
+- Monitor model quality and support retraining.
 
 ---
 
-FraudFlow предназначен для изучения полного цикла разработки ML-системы: от данных до работающего интерфейса.
+FraudFlow demonstrates the complete lifecycle of an ML system, from raw data to an interactive application.
