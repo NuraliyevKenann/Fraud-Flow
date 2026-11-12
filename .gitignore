@@ -7,6 +7,7 @@ venv/
 # Local datasets and generated models
 data/
 models/
+artifacts/*.joblib
 
 # Notebook and editor artifacts
 .ipynb_checkpoints/

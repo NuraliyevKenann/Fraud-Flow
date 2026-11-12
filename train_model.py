@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+from pathlib import Path
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler 
@@ -10,9 +12,10 @@ from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score 
 from sklearn.metrics import precision_recall_curve
 from sklearn.metrics import average_precision_score
-import numpy as np
 
 DATA_PATH='data/PS_20174392719_1491204439457_log.csv'
+ARTIFACTS_DIR=Path('artifacts')
+ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
 MODEL_COLUMNS=['step','type','amount','isFraud','oldbalanceOrg','newbalanceOrig','oldbalanceDest','newbalanceDest']
 
 model_data = pd.read_csv(
@@ -66,7 +69,9 @@ ct=ColumnTransformer([
 
 clf=LogisticRegression(
     class_weight='balanced',
-    max_iter=1000
+    max_iter=1000,
+    solver='newton-cholesky',
+    verbose=1
 )
 
 model_pipeline=Pipeline([('preprocessor', ct),('classifier',clf)])
