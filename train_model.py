@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import joblib
 from pathlib import Path
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
@@ -15,6 +16,7 @@ from sklearn.metrics import average_precision_score
 
 DATA_PATH='data/PS_20174392719_1491204439457_log.csv'
 ARTIFACTS_DIR=Path('artifacts')
+MODEL_PATH=ARTIFACTS_DIR / 'fraudflow_model.joblib'
 ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
 MODEL_COLUMNS=['step','type','amount','isFraud','oldbalanceOrg','newbalanceOrig','oldbalanceDest','newbalanceDest']
 
@@ -149,3 +151,7 @@ print("Test precision:", test_precision)
 print("Test recall:", test_recall)
 print("Test F1:", test_f1)
 print("Test average precision:", test_average_precision)
+
+model_artifact= {
+    'pipeline' : model_pipeline
+}
