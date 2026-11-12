@@ -13,7 +13,7 @@ from sklearn.metrics import average_precision_score
 import numpy as np
 
 DATA_PATH='data/PS_20174392719_1491204439457_log.csv'
-MODEL_COLUMNS=['step','type','amount','isFraud']
+MODEL_COLUMNS=['step','type','amount','isFraud','oldbalanceOrg','newbalanceOrig','oldbalanceDest','newbalanceDest']
 
 model_data = pd.read_csv(
     DATA_PATH,
@@ -61,7 +61,7 @@ scaler=StandardScaler()
 ct=ColumnTransformer([
     ('type.encoder',enc, ['type'])
 ,
-  ('scale', scaler , ['step','amount'])]
+  ('scale', scaler , ['step','amount','oldbalanceOrg','newbalanceOrig','oldbalanceDest','newbalanceDest'])]
 )
 
 clf=LogisticRegression(
