@@ -153,5 +153,11 @@ print("Test F1:", test_f1)
 print("Test average precision:", test_average_precision)
 
 model_artifact= {
-    'pipeline' : model_pipeline
+    'pipeline' : model_pipeline ,
+    'threshold' : float(best_threshold) ,
+    'feature_columns' : list(X_train.columns) ,
+    'version' : '1.0'
 }
+
+joblib.dump(model_artifact,MODEL_PATH)
+print("Model artifact saved:", MODEL_PATH)
